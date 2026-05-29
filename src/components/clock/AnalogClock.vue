@@ -54,7 +54,7 @@ onUnmounted(() => {
       />
       <line
         x1="100" y1="100"
-        x2="100 + 45 * Math.sin((hourDeg * Math.PI) / 180)"
+        :x2="100 + 45 * Math.sin((hourDeg * Math.PI) / 180)"
         :y2="100 - 45 * Math.cos((hourDeg * Math.PI) / 180)"
         stroke="var(--accent)" stroke-width="6" stroke-linecap="round"
       />

@@ -13,11 +13,14 @@ let intervalId: ReturnType<typeof setInterval> | null = null
 
 const hourDeg = computed(() => {
   const h = now.value.getHours() % 12
-  return h * 30
+  const m = now.value.getMinutes()
+  return h * 30 + m * 0.5
 })
 
 const minuteDeg = computed(() => {
-  return now.value.getMinutes() * 6
+  const m = now.value.getMinutes()
+  const s = now.value.getSeconds()
+  return m * 6 + s * 0.1
 })
 
 const secondDeg = computed(() => {
