@@ -2,6 +2,7 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
 export type ClockMode = 'analog' | 'digital' | 'pendulum'
+export type TodoPosition = 'panel' | 'left' | 'right'
 
 export interface ClockColor {
   name: string
@@ -21,6 +22,7 @@ export const CLOCK_COLORS: ClockColor[] = [
 export const useSettingsStore = defineStore('settings', () => {
   const mode = ref<ClockMode>('analog')
   const colorIndex = ref(0)
+  const todoPosition = ref<TodoPosition>('panel')
 
   const currentColor = computed(() => CLOCK_COLORS[colorIndex.value] as ClockColor)
 
@@ -32,7 +34,11 @@ export const useSettingsStore = defineStore('settings', () => {
     colorIndex.value = index
   }
 
-  return { mode, colorIndex, currentColor, setMode, setColor }
+  function setTodoPosition(pos: TodoPosition) {
+    todoPosition.value = pos
+  }
+
+  return { mode, colorIndex, todoPosition, currentColor, setMode, setColor, setTodoPosition }
 }, {
   persist: true,
 })

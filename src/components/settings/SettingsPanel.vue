@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useSettingsStore, CLOCK_COLORS, type ClockMode } from '@/stores/settings'
+import { useSettingsStore, CLOCK_COLORS, type ClockMode, type TodoPosition } from '@/stores/settings'
 import { Icon } from '@iconify/vue'
 
 const settingsStore = useSettingsStore()
@@ -8,6 +8,12 @@ const modes: { value: ClockMode; icon: string }[] = [
   { value: 'analog', icon: 'ph:clock' },
   { value: 'digital', icon: 'ph:timer' },
   { value: 'pendulum', icon: 'ph:pendulum' },
+]
+
+const todoPositions: { value: TodoPosition; icon: string; title: string }[] = [
+  { value: 'panel', icon: 'ph:circles-four', title: '面板' },
+  { value: 'left', icon: 'ph:arrow-line-left', title: '左边' },
+  { value: 'right', icon: 'ph:arrow-line-right', title: '右边' },
 ]
 </script>
 
@@ -46,6 +52,24 @@ const modes: { value: ClockMode; icon: string }[] = [
           @click="settingsStore.setColor(index)"
           :title="color.name"
         />
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="section-label">
+        <Icon icon="ph:rows" />
+        <span>待办位置</span>
+      </div>
+      <div class="mode-buttons">
+        <button
+          v-for="pos in todoPositions"
+          :key="pos.value"
+          class="mode-btn"
+          :class="{ active: settingsStore.todoPosition === pos.value }"
+          @click="settingsStore.setTodoPosition(pos.value)"
+          :title="pos.title"
+        >
+          <Icon :icon="pos.icon" />
+        </button>
       </div>
     </div>
   </div>

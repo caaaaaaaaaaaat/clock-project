@@ -14,23 +14,26 @@ import SettingsPanel from '@/components/settings/SettingsPanel.vue'
 const settingsStore = useSettingsStore()
 
 interface PanelConfig {
-  todo: boolean
   stopwatch: boolean
   history: boolean
   settings: boolean
 }
 
 const panelConfig = ref<PanelConfig>({
-  todo: false,
   stopwatch: false,
   history: false,
   settings: false,
 })
 
+const todoVisible = ref(false)
+
+function toggleTodo() {
+  todoVisible.value = !todoVisible.value
+}
+
 function togglePanel(key: keyof PanelConfig) {
   const isOpening = !panelConfig.value[key]
   panelConfig.value = {
-    todo: false,
     stopwatch: false,
     history: false,
     settings: false,
@@ -56,6 +59,16 @@ function togglePanel(key: keyof PanelConfig) {
     <div class="sticker sticker-3"><Icon icon="ph:flower" /></div>
     <div class="sticker sticker-4"><Icon icon="ph:sparkle" /></div>
 
+    <!-- Todo fixed panel - left -->
+    <div v-if="settingsStore.todoPosition === 'left' && todoVisible" class="todo-fixed left">
+      <TodoPanel />
+    </div>
+
+    <!-- Todo fixed panel - right -->
+    <div v-if="settingsStore.todoPosition === 'right' && todoVisible" class="todo-fixed right">
+      <TodoPanel />
+    </div>
+
     <!-- Clock area -->
     <div class="clock-area">
       <component
@@ -68,16 +81,20 @@ function togglePanel(key: keyof PanelConfig) {
 
     <!-- Control panels -->
     <div class="control-area">
-      <!-- Todo -->
+      <!-- Todo button (always in control-area) -->
       <div class="panel-wrapper">
         <CollapsiblePanel
+          v-if="settingsStore.todoPosition === 'panel'"
           icon="ph:check-square"
           label="待办"
-          :collapsed="!panelConfig.todo"
-          @toggle="togglePanel('todo')"
+          :collapsed="!todoVisible"
+          @toggle="toggleTodo"
         >
           <TodoPanel />
         </CollapsiblePanel>
+        <button v-else class="icon-btn" @click="toggleTodo" title="待办">
+          <Icon icon="ph:check-square" />
+        </button>
       </div>
 
       <!-- Stopwatch -->
@@ -185,5 +202,61 @@ html, body {
 
 .panel-wrapper {
   position: relative;
+}
+
+.todo-fixed {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+}
+.todo-fixed.left { left: 16px; }
+.todo-fixed.right { right: 16px; }
+
+.todo-fixed :deep(.todo-panel) {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.todo-fixed.left :deep(.todo-panel) {
+  margin-left: 12px;
+}
+
+.todo-fixed.right :deep(.todo-panel) {
+  margin-right: 12px;
+}
+
+.icon-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: var(--panel-bg, #FFE4EC);
+  color: var(--panel-color, #FF69B4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.icon-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 </style>
